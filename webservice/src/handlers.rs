@@ -1,4 +1,3 @@
-use std::intrinsics::likely;
 use super::state::AppState;
 use actix_web::{web, HttpResponse};
 use super::models::Course;
