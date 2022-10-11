@@ -31,3 +31,26 @@ pub async fn new_course(new_couese: web::Json<Course>, app_state: web::Data<AppS
     app_state.courses.lock().unwrap().push(new_course);
     HttpResponse::Ok().json("Course added")
 }
+
+
+pub async fn get_courses_for_teacher(
+    app_state: web::Data<AppState>,
+    params: web::Path<usize>,
+) -> HttpResponse {
+    let teacher_id: usize = params.0;
+
+    let filtered_courses = app_state
+        .courses
+        .lock()
+        .unwrap()
+        .clone()
+        .into_iter()
+        .filter(|course| {course.teacher_id == teacher_id})
+        .collect::<Vec<Course>>();
+
+    if filtered_courses.len() > 0 {
+        HttpResponse::Ok().json(filtered_courses)
+    } else {
+        HttpResponse::Ok().json("NO courses found for teacher".to_string())
+    }
+}
