@@ -54,3 +54,28 @@ pub async fn get_courses_for_teacher(
         HttpResponse::Ok().json("NO courses found for teacher".to_string())
     }
 }
+
+pub async fn get_course_detail (
+    app_state: web::Data<AppState>,
+    params: web::Path<(usize,usize)>,
+) -> HttpResponse {
+    let (teacher_id, course_id) = params.0;
+    let selected_course = app_state
+        .courses
+        .lock()
+        .unwrap()
+        .clone()
+        .into_iter()
+        .find(|x| {x.teacher_id == teacher_id && x.id == Some(course_id)})
+        .ok_or("Course not found");
+
+    if let Ok(course) = selected_course {
+        HttpResponse::Ok().json(course)
+    }else {
+        HttpResponse::Ok().json("Course not found".to_string())
+    }
+
+}
+
+
+
